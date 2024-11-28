@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ course.name }} - MLM Education{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                {% if course.image %}
+                    <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.name }}">
+                {% endif %}
+                <div class="card-body">
+                    <h1 class="card-title">{{ course.name }}</h1>
+                    <p class="card-text">{{ course.description }}</p>
+                    <h4 class="mb-3">Price: ${{ course.price }}</h4>
+                    <form method="post" action="{% url 'courses:purchase' course.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary btn-lg">Purchase Course</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Course Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Created:</strong> {{ course.created_at|date }}</p>
+                    <hr>
+                    <h6>What you'll get:</h6>
+                    <ul>
+                        <li>Lifetime access to course materials</li>
+                        <li>Certificate of completion</li>
+                        <li>24/7 support</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

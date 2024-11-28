@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Courses - MLM Education{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Available Courses</h1>
+    <div class="row">
+        {% for course in courses %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    {% if course.image %}
+                        <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.name }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ course.name }}</h5>
+                        <p class="card-text">{{ course.description|truncatewords:30 }}</p>
+                        <p class="card-text"><strong>Price: ${{ course.price }}</strong></p>
+                        <a href="{% url 'courses:detail' course.pk %}" class="btn btn-primary">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <p>No courses available at the moment.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

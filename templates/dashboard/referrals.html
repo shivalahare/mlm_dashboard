@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}My Referrals - MLM Education{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">My Referrals</h1>
+    
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Downline</h5>
+                    <h3>{{ downline_stats.total_members }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Direct Referrals</h5>
+                    <h3>{{ downline_stats.direct_referrals }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Indirect Referrals</h5>
+                    <h3>{{ downline_stats.indirect_referrals }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Direct Referrals</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for referral in direct_referrals %}
+                            <div class="list-group-item">
+                                <h6 class="mb-1">{{ referral.get_full_name|default:referral.username }}</h6>
+                                <small class="text-muted">Joined: {{ referral.date_joined|date }}</small>
+                            </div>
+                        {% empty %}
+                            <p class="text-muted">No direct referrals yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Complete Downline</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for member in downline %}
+                            <div class="list-group-item">
+                                <h6 class="mb-1">{{ member.get_full_name|default:member.username }}</h6>
+                                <small class="text-muted">
+                                    Referred by: {{ member.referrer.username }}
+                                </small>
+                            </div>
+                        {% empty %}
+                            <p class="text-muted">No downline members yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}My Earnings - MLM Education{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">My Earnings</h1>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Earnings</h5>
+                    <h3>${{ total_earnings }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Earnings Overview</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="earningsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('{% url "dashboard:earnings_data" %}')
+        .then(response => response.json())
+        .then(data => {
+            const ctx = document.getElementById('earningsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Monthly Earnings',
+                        data: data.values,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+});
+</script>
+{% endblock %}

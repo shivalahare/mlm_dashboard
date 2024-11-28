@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MLM Education Platform{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0066cc;
+            --secondary-color: #f8f9fa;
+        }
+        .navbar {
+            background-color: var(--primary-color);
+        }
+        .sidebar {
+            background-color: var(--secondary-color);
+            min-height: calc(100vh - 56px);
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'dashboard:home' %}">MLM Education</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'dashboard:home' %}">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'users:logout' %}">Logout</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'users:login' %}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'users:register' %}">Register</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            {% if user.is_authenticated %}
+                <div class="col-md-3 col-lg-2 sidebar py-3">
+                    <div class="list-group">
+                        <a href="{% url 'dashboard:home' %}" class="list-group-item list-group-item-action">Dashboard</a>
+                        <a href="{% url 'courses:list' %}" class="list-group-item list-group-item-action">Courses</a>
+                        {% if user.is_agent %}
+                            <a href="{% url 'dashboard:referrals' %}" class="list-group-item list-group-item-action">Referrals</a>
+                            <a href="{% url 'dashboard:earnings' %}" class="list-group-item list-group-item-action">Earnings</a>
+                        {% endif %}
+                    </div>
+                </div>
+                <main class="col-md-9 col-lg-10 py-3">
+                    {% block content %}{% endblock %}
+                </main>
+            {% else %}
+                <main class="col-12 py-3">
+                    {% block content_full %}{% endblock %}
+                </main>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

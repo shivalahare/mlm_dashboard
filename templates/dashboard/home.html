@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - MLM Education{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Welcome, {{ user.get_full_name|default:user.username }}</h1>
+
+    {% if user.is_agent %}
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Earnings</h5>
+                        <h3>${{ total_incentives }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Downline Members</h5>
+                        <h3>{{ downline_count }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Downline Purchases</h5>
+                        <h3>{{ downline_purchases }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Monthly Earnings</h5>
+                        <h3>${{ monthly_earnings }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Earnings Overview</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="earningsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Recent Incentives</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            {% for incentive in recent_incentives %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    ${{ incentive.amount }}
+                                    <small class="text-muted">{{ incentive.created_at|date }}</small>
+                                </li>
+                            {% empty %}
+                                <li class="list-group-item">No recent incentives</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">My Courses</h5>
+                </div>
+                <div class="card-body">
+                    {% if purchased_courses %}
+                        <div class="row">
+                            {% for purchase in purchased_courses %}
+                                <div class="col-md-4 mb-3">
+                                    <div class="card h-100">
+                                        {% if purchase.package.image %}
+                                            <img src="{{ purchase.package.image.url }}" class="card-img-top" alt="{{ purchase.package.name }}">
+                                        {% endif %}
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ purchase.package.name }}</h5>
+                                            <p class="card-text">{{ purchase.package.description|truncatewords:20 }}</p>
+                                            <p class="card-text"><small class="text-muted">Purchased on {{ purchase.purchase_date|date }}</small></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p>You haven't purchased any courses yet.</p>
+                        <a href="{% url 'courses:list' %}" class="btn btn-primary">Browse Courses</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if user.is_agent %}
+<script>
+    const ctx = document.getElementById('earningsChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Monthly Earnings',
+                data: [12, 19, 3, 5, 2, 3],
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endif %}
+{% endblock %}
